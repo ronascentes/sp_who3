@@ -1,89 +1,38 @@
-/* CONTRIBUTE */
 
-This is the contribute.md of our project. Great to have you here. Here are a few ways you can help make this project better!
+Stop using sp_who2, start using sp_who3!
 
-# Contribute.md
+# sp_who3
 
-## Team members
+Use sp_who3 to first view the current system load and to identify a session, users, sessions and/or processes in an instance of the SQL Server. Sp_who3 was build by using the latest DMVs and T-SQL features.
 
-This section introduces the core team members. 
+## Limitation
 
-## Learn & listen
+Work only for SQL Server 2008 R2 or above 
 
-This section includes ways to get started with your open source project. Include links to documentation and to different communication channels: 
+## Parameters
 
-* Mailing list: 
-* IRC channel:  
-* Blog:         
-* Anything else:  
+@spid 999           : filter sessions by spid
+@database 'db_name' : filter sessions by database name
+@type 'memory'      : who is consuming the memory
+@type 'cpu'         : who has cached plans that consumed the most cumulative CPU (top 10)
+@type 'count'       : who is connected and how many sessions it has
+@type 'idle'        : who is idle that have open transactions
+@type 'tempdb'      : who is running tasks that use tempdb (top 5)
+@type 'block'       : who is blocking
 
-## Adding new features
+# Reference
 
-This section includes advice on how to build new features for the project & what kind of process it includes. 
-
-* This is how we like people to add new features:         
-* Here are some specifics on the coding style we prefer:   
-* This is how you send your pull request:                  
-* You should include the following tests:                  
-* These are the updates we hope you make to the changelog: 
-
-Don’t get discouraged! We estimate that the response time from the
-maintainers is around: 
-
-# Bug triage
-
-This sections explains how bug triaging is done for your project. Help beginners by including examples to good bug reports and providing them questions they should look to answer. 
-
-* You can help report bugs by filing them here: 
-* You can look through the existing bugs here: 
-
-* You can help us diagnose and fix existing bugs by asking and providing answers for the following:
-
-  * Is the bug reproducible as explained?   
-  * Is it reproducible in other environments (for instance, on different browsers or devices)?   
-  * Are the steps to reproduce the bug clear? If not, can you describe how you might reproduce it?  
-  * What tags should the bug have?  
-  * Is this bug something you have run into? Would you appreciate it being looked into faster?  
-
-* You can close fixed bugs by testing old tickets to see if they are still happening.
-* You can update our changelog here:
-* You can remove duplicate bug reports by:
+sys.dm_exec_requests - https://msdn.microsoft.com/us-us/library/ms177648.aspx
+sys.dm_exec_sessions - https://msdn.microsoft.com/en-us/library/ms176013.aspx
+sys.dm_exec_sql_text - https://msdn.microsoft.com/en-us/library/ms181929.aspx
+sys.dm_exec_text_query_plan - https://msdn.microsoft.com/en-us/library/bb326654.aspx
+sys.dm_exec_query_stats - https://msdn.microsoft.com/en-us/library/ms189741.aspx
+sys.dm_tran_session_transactions - https://msdn.microsoft.com/en-us/library/ms188739.aspx
+sys.dm_db_task_space_usage - https://msdn.microsoft.com/en-us/library/ms190288.aspx
+sys.dm_tran_locks - https://msdn.microsoft.com/en-us/library/ms190345.aspx
+sys.dm_os_waiting_tasks - https://msdn.microsoft.com/en-us/library/ms188743.aspx
+High CPU Troubleshooting with DMV Queries - http://blogs.msdn.com/b/psssql/archive/2013/06/17/high-cpu-troubleshooting-with-dmv-queries.aspx
+SQL Server Diagnostic Information Queries - http://sqlserverperformance.wordpress.com/
 
 
-# Beta testing
-
-This section explains if your project needs beta testing. Explain why early releases require heavy testing and how they can help with specially across browsers and on different hardware. 
-
-* For our project you can find the roadmap and features that require
-testing from here: 
-
-# Translations
-
-This section includes any instructions or translation needs your project has. 
-
-* You can help us translate our project here: 
-
-# Documentation
-
-This section includes any help you need with the documentation and where it can be found. Code needs explanation, and sometimes those who know the code well have trouble explaining it to someone just getting into it. 
-
-* Help us with documentation here
-
-# Community 
-This section includes ideas on how non-developers can help with the project. Here's a few examples:
-
-* You can help us answer questions our users have here: 
-* You can help build and design our website here:
-* You can help write blog posts about the project by: 
-* You can help with newsletters and internal communications by: 
-
-* Create an example of the project in real world by building something or
-showing what others have built. 
-* Write about other people’s projects based on this project. Show how
-it’s used in daily life. Take screenshots and make videos!
-
-
-# Your first bugfix
-This section should help a person get started with their very first bug fix and thinking through the problem.
-
-* If you have further questions, contact: 
+* If you have further questions, contact: @ronascentes at twitter
