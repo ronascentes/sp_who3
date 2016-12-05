@@ -1,1 +1,0 @@
-# SQL Health Check
