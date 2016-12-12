@@ -9,24 +9,13 @@ DROP PROCEDURE sp_who3
 GO
 CREATE PROCEDURE sp_who3 @spid INT = NULL, @database SYSNAME = NULL
 AS
-/****************************************************************************************** 
+/***************************************************************************************************** 
 Use sp_who3 to first view the current system load and to identify a session, users, sessions and/or 
 processes in an instance of the SQL Server by using the latest DMVs and T-SQL features.
    
-   *Revision History
-   - 31-Jul-2011: Initial development - Extracted from DynamicsPerf
-   - 12-Apr-2012: Enhanced sql_text, object_name outputs;
-								  Added NOLOCK hints and RECOMPILE option;
-								  Added BlkBy column;
-								  Removed dead-code.
-   - 03-Nov-2014: Added program_name and open_transaction_count column
-   - 10-Nov-2014: Added granted_memory_GB
-   - 03-Nov-2015: Added parameters to show memory and cpu information
-   - 12-Nov-2015: Added query to get IO info
-   - 17-Nov-2015: Changed the logic and addedd new parameters
-   - 18-Nov-2015: Added help content
-   - 06-Set-2016: Added spid and database parameters to filter the result
-   - 25-Nov-2016: Added support to sys.dm_exec_query_memory_grants and sys.dm_db_session_space_usage; removed unuseful code
+Create by @ronascentes Date: 31-Jul-2011
+Last Modified: 12-Dez-2016
+https://github.com/ronascentes/sql-tools/edit/master/sp_who3
 
 *******************************************************************************************/
 BEGIN
@@ -44,9 +33,9 @@ BEGIN
 					r.blocking_session_id AS BlkBy, r.open_transaction_count AS NoOfOpenTran, r.wait_type,
 					object_name = OBJECT_SCHEMA_NAME(s.objectid,s.dbid) + ''.'' + OBJECT_NAME(s.objectid, s.dbid),
  					program_name = se.program_name, p.query_plan AS query_plan,
-					sql_text = SUBSTRING	(s.text,r.statement_start_offset/2,
-						(CASE WHEN r.statement_end_offset = -1 THEN LEN(CONVERT(nvarchar(MAX), s.text)) * 2
-							ELSE r.statement_end_offset	END - r.statement_start_offset)/2),
+					sql_text = SUBSTRING(s.text,
+						(CASE WHEN r.statement_start_offset = 0 THEN 0 ELSE r.statement_start_offset/2 END),
+						(CASE WHEN r.statement_end_offset = -1 THEN DATALENGTH(s.text) ELSE r.statement_end_offset/2 END - (CASE WHEN r.statement_start_offset = 0 THEN 0 ELSE r.statement_start_offset/2 END))),
 					mg.requested_memory_kb,	mg.granted_memory_kb, mg.ideal_memory_kb, mg.query_cost,
 					((((ssu.user_objects_alloc_page_count + (SELECT SUM(tsu.user_objects_alloc_page_count) FROM sys.dm_db_task_space_usage tsu WHERE tsu.session_id = ssu.session_id)) -
 					(ssu.user_objects_dealloc_page_count + (SELECT SUM(tsu.user_objects_dealloc_page_count) FROM sys.dm_db_task_space_usage tsu WHERE tsu.session_id = ssu.session_id)))*8)/1024) AS user_obj_in_tempdb_MB,
