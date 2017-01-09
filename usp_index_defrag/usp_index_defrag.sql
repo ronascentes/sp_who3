@@ -1,16 +1,13 @@
 USE [Dell_Maint]
 GO
 
-/****** Object:  StoredProcedure [dbo].[usp_index_maint]    Script Date: 7/28/2016 12:09:11 PM ******/
-DROP PROCEDURE [dbo].[usp_index_defrag]
-GO
-
-/****** Object:  StoredProcedure [dbo].[usp_index_maint]    Script Date: 7/28/2016 12:09:11 PM ******/
+/****** Object:  StoredProcedure [dbo].[usp_GDBMS_IndexDefrag]    Script Date: 1/9/2017 8:42:22 AM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 CREATE PROCEDURE [dbo].[usp_index_defrag]
 @DatabaseName sysname
@@ -24,7 +21,7 @@ usp_index_defrag:		Uses sys.dm_db_index_physical_stats to get fragmentation info
 						Uses MAXDOP to reduce the concurrent index alteration activity;
 						Uses the latest ALTER INDEX features
 						Works only for SQL Server 2008 or above;
-						Rebuilding indexes can cause the log file to grow significantly as the log cannot be truncated until redo has completed the changes in all secondary replicas.
+						Rebuilding indexes can causeáthe log file to grow significantlyáas the log cannot be truncated until redo has completed the changes in all secondary replicas.
 						https://support.microsoft.com/en-us/kb/317375
 						 
 Witten By:				Rodrigo N Silva 
@@ -39,11 +36,12 @@ References:				https://blogs.technet.microsoft.com/josebda/2009/03/20/sql-server
 						https://technet.microsoft.com/en-us/library/ms189858(v=sql.110).aspx
 						https://blogs.msdn.microsoft.com/alwaysonpro/2015/03/03/recommendations-for-index-maintenance-with-alwayson-availability-groups/
 						https://msdn.microsoft.com/en-us/library/ms190981(v=sql.110).aspx
+
 *********************************************************************************************/
 
 DECLARE @SQL NVARCHAR(4000), @ErrorMessage NVARCHAR(4000);
 DECLARE @ObjectOwner SYSNAME, @ObjectName SYSNAME,  @pObjectName SYSNAME, @IndexName SYSNAME;
-DECLARE @ErrorNum INT, @FragInfoID INT, @sqlversion INT, @ObjectId INT, @RebuildOnlineIsTrue INT, @pObjectID INT, @ErrorSeverity INT, @ErrorState INT;
+DECLARE @ErrorNum INT, @FragInfoID INT, @sqlversion INT, @ObjectID INT, @RebuildOnlineIsTrue INT, @pObjectID INT, @ErrorSeverity INT, @ErrorState INT;
 DECLARE @IndexHasLOB BIT, @pIndexHasLOB BIT, @TableHasLOB1 BIT,@pTableHasLOB1 BIT, @TableHasLOB2 BIT,@pTableHasLOB2 BIT;
 DECLARE @percentfrag DECIMAL(38,10), @PercentThreshold DECIMAL(38,10);
 DECLARE @IndexTypeDesc NVARCHAR(60), @AllocUnitTypeDesc NVARCHAR(60);
@@ -93,7 +91,7 @@ CREATE TABLE #frag_info(
 -- get fragmentation info. That's the heart of this stored procedure.
 SET @Sql = N'INSERT INTO #frag_info(DatabaseName, ObjectOwner, ObjectName, ObjectID,IndexName, LogicalFrag, IndexTypeDesc, AllocUnitTypeDesc)
 			SELECT DB_NAME(), s.name, o.name, i.[object_id], i.name, stats.avg_fragmentation_in_percent, stats.index_type_desc, stats.alloc_unit_type_desc	
-			FROM sys.Dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, ''LIMITED'') stats
+			FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, ''LIMITED'') stats
 			JOIN sys.objects o ON o.object_id = stats.object_id
 			JOIN sys.schemas s ON s.schema_id = o.schema_id 
 			JOIN sys.indexes i ON i.object_id = stats.object_id AND i.index_id = stats.index_id
@@ -116,9 +114,9 @@ BEGIN
 	END
 	
 	-- get first index to defrag  
-	SELECT TOP(1) @ObjectOwner = ObjectOwner, @ObjectName = ObjectName, @ObjectId = ObjectId, @IndexName = IndexName, 
+	SELECT TOP(1) @ObjectOwner = ObjectOwner, @ObjectName = ObjectName, @ObjectID = ObjectID, @IndexName = IndexName, 
 		@percentfrag = LogicalFrag,	@FragInfoID = FragInfoID,@IndexTypeDesc = IndexTypeDesc, @AllocUnitTypeDesc = AllocUnitTypeDesc FROM #frag_info
-		ORDER BY ObjectId ;
+		ORDER BY ObjectID ;
 		
 	-- If less than or equal this amount then REORGANIZE the index; If greater than to this amount them REBUILD the Index
 	-- ALTER INDEX REORGANIZE statement is always performed online. This means long-term blocking table locks are not held and queries or updates to the underlying table can continue during the ALTER INDEX REORGANIZE transaction. 
@@ -148,10 +146,10 @@ BEGIN
 										AND ((c.system_type_id IN (34,35,99,241)) -- image, text, ntext, xml
 										OR (c.system_type_id IN (167,231,165) -- varchar, nvarchar, varbinary
 											AND max_length = -1))
-										AND i.object_id = @pObjectId) 
+										AND i.object_id = @pObjectID) 
 							BEGIN SET @pIndexHasLOB = 1 END ELSE BEGIN SET @pIndexHasLOB = 0 END';
 						
-			EXECUTE @dbContext @SQL, @ParmDefinition1, @pObjectID = @ObjectId, @pIndexHasLOB = @IndexHasLOB OUTPUT;
+			EXECUTE @dbContext @SQL, @ParmDefinition1, @pObjectID = @ObjectID, @pIndexHasLOB = @IndexHasLOB OUTPUT;
 						
 			IF @IndexHasLOB = 1
 				BEGIN
@@ -267,8 +265,6 @@ END; -- end while, stupid!
 
 -- We're done. Byeee!
 DROP TABLE #frag_info
-
-
 
 GO
 
