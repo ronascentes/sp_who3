@@ -63,7 +63,8 @@ GO
 
 -- TF4199 sQL Server query optimizer hotfix servicing model https://support.microsoft.com/en-us/kb/974006
 
--- Usage: DBCC TRACEON (<TF#>,-1)
+-- Usage: 
+-- DBCC TRACEON (1118,3226,2371,4199, -1);
 DBCC TRACESTATUS (1118,3226,2371,4199);  
 GO
 
