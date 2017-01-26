@@ -8,7 +8,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 CREATE PROCEDURE [dbo].[usp_index_defrag]
 @DatabaseName sysname
 AS
@@ -37,11 +36,14 @@ References:				https://blogs.technet.microsoft.com/josebda/2009/03/20/sql-server
 						https://blogs.msdn.microsoft.com/alwaysonpro/2015/03/03/recommendations-for-index-maintenance-with-alwayson-availability-groups/
 						https://msdn.microsoft.com/en-us/library/ms190981(v=sql.110).aspx
 
+Revision:				01/04/2017 - Antonio Carneiro - fixed sys.dm_db_index_physical_stats case sensitive issue
+						01/09/2017 - Rodrigo Silva - fixed "ObjectID" case sensitive
+						01/26/2017 - Rodrigo Silva - Added support to columnstore index (SQL 2016 only)
 *********************************************************************************************/
 
 DECLARE @SQL NVARCHAR(4000), @ErrorMessage NVARCHAR(4000);
 DECLARE @ObjectOwner SYSNAME, @ObjectName SYSNAME,  @pObjectName SYSNAME, @IndexName SYSNAME;
-DECLARE @ErrorNum INT, @FragInfoID INT, @sqlversion INT, @ObjectID INT, @RebuildOnlineIsTrue INT, @pObjectID INT, @ErrorSeverity INT, @ErrorState INT;
+DECLARE @ErrorNum INT, @FragInfoID INT, @sqlversion INT, @ObjectID INT, @RebuildOnlineIsTrue INT, @pObjectID INT, @ErrorSeverity INT, @ErrorState INT, @IndexType TINYINT;
 DECLARE @IndexHasLOB BIT, @pIndexHasLOB BIT, @TableHasLOB1 BIT,@pTableHasLOB1 BIT, @TableHasLOB2 BIT,@pTableHasLOB2 BIT;
 DECLARE @percentfrag DECIMAL(38,10), @PercentThreshold DECIMAL(38,10);
 DECLARE @IndexTypeDesc NVARCHAR(60), @AllocUnitTypeDesc NVARCHAR(60);
@@ -82,6 +84,7 @@ CREATE TABLE #frag_info(
 	[ObjectName] [sysname] NOT NULL,
 	[ObjectID] INT NULL,
 	[IndexName] [sysname] NOT NULL,
+	[IndexType] TINYINT NOT NULL,
 	[LogicalFrag] [decimal](18, 0) NULL,
 	[IndexTypeDesc] NVARCHAR(60),
 	[AllocUnitTypeDesc] NVARCHAR(60),
@@ -89,8 +92,8 @@ CREATE TABLE #frag_info(
 )
 
 -- get fragmentation info. That's the heart of this stored procedure.
-SET @Sql = N'INSERT INTO #frag_info(DatabaseName, ObjectOwner, ObjectName, ObjectID,IndexName, LogicalFrag, IndexTypeDesc, AllocUnitTypeDesc)
-			SELECT DB_NAME(), s.name, o.name, i.[object_id], i.name, stats.avg_fragmentation_in_percent, stats.index_type_desc, stats.alloc_unit_type_desc	
+SET @Sql = N'INSERT INTO #frag_info(DatabaseName, ObjectOwner, ObjectName, ObjectID,IndexName, IndexType, LogicalFrag, IndexTypeDesc, AllocUnitTypeDesc)
+			SELECT DB_NAME(), s.name, o.name, i.[object_id], i.name, i.type, stats.avg_fragmentation_in_percent, stats.index_type_desc, stats.alloc_unit_type_desc	
 			FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, ''LIMITED'') stats
 			JOIN sys.objects o ON o.object_id = stats.object_id
 			JOIN sys.schemas s ON s.schema_id = o.schema_id 
@@ -114,9 +117,9 @@ BEGIN
 	END
 	
 	-- get first index to defrag  
-	SELECT TOP(1) @ObjectOwner = ObjectOwner, @ObjectName = ObjectName, @ObjectID = ObjectID, @IndexName = IndexName, 
+	SELECT TOP(1) @ObjectOwner = ObjectOwner, @ObjectName = ObjectName, @ObjectID = ObjectID, @IndexName = IndexName, @IndexType = IndexType,
 		@percentfrag = LogicalFrag,	@FragInfoID = FragInfoID,@IndexTypeDesc = IndexTypeDesc, @AllocUnitTypeDesc = AllocUnitTypeDesc FROM #frag_info
-		ORDER BY ObjectID ;
+		ORDER BY ObjectID;
 		
 	-- If less than or equal this amount then REORGANIZE the index; If greater than to this amount them REBUILD the Index
 	-- ALTER INDEX REORGANIZE statement is always performed online. This means long-term blocking table locks are not held and queries or updates to the underlying table can continue during the ALTER INDEX REORGANIZE transaction. 
@@ -126,6 +129,13 @@ BEGIN
 		goto exec_defrag;
 	END;
 
+	-- if columnstore index (applies to SQL Server 2014 or higher)
+	IF @sqlversion >= 11 AND @IndexType >= 5
+	BEGIN
+		SELECT @SQL = N'ALTER INDEX ' + QUOTENAME(@indexname) + N' ON ' + QUOTENAME(@DatabaseName) + N'.'+ QUOTENAME(@ObjectOwner) + N'.' + QUOTENAME(@ObjectName) + N' REORGANIZE';
+		goto exec_defrag;
+	END;
+	
 	-- If SQL Server 2008 and 2008R2
 	IF @sqlversion < 11
 	BEGIN
@@ -187,7 +197,7 @@ BEGIN
 			END;
 		END;
 	END;
-			
+				
 	-- If SQL Server 2012 or higher
 	IF @sqlversion >= 11
 	BEGIN
@@ -267,5 +277,3 @@ END; -- end while, stupid!
 DROP TABLE #frag_info
 
 GO
-
-
