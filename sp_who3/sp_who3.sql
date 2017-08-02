@@ -46,7 +46,7 @@ BEGIN
 					+ CAST((estimated_completion_time %3600000)/60000 as varchar) + ''min, ''
 					+ CAST((estimated_completion_time %60000)/1000 as varchar) + '' sec'' as est_time_to_go,
 					dateadd(second,estimated_completion_time/1000, getdate()) as est_completion_time
-			FROM   sys.dm_exec_requests r WITH (NOLOCK) 
+			FROM   sys.dm_exec_requests r WITH (NOLOCK)  
 			JOIN sys.dm_exec_sessions se WITH (NOLOCK) ON r.session_id = se.session_id
 			LEFT OUTER JOIN sys.dm_exec_query_memory_grants mg WITH (NOLOCK) ON r.session_id = mg.session_id AND r.request_id = mg.request_id
 			LEFT OUTER JOIN sys.dm_db_session_space_usage ssu WITH (NOLOCK) ON r.session_id = ssu.session_id 
