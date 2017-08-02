@@ -3,7 +3,7 @@ GO
 DECLARE @db_name			NVARCHAR (500);
 DECLARE @strStatement		NVARCHAR (4000);
 DECLARE database_curs		CURSOR FOR
-								SELECT name FROM   sys.databases;
+								SELECT name FROM  sys.databases;
 
 OPEN database_curs;    
 FETCH NEXT FROM database_curs INTO @db_name
