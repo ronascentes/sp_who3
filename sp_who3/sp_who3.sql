@@ -14,7 +14,6 @@ Use sp_who3 to first view the current system load and to identify a session, use
 processes in an instance of the SQL Server by using the latest DMVs and T-SQL features.
    
 Create by @ronascentes Date: 31-Jul-2011
-Last Modified: 12-Dez-2016
 https://github.com/ronascentes/sql-tools/edit/master/sp_who3
 
 *******************************************************************************************/
