@@ -10,16 +10,4 @@ JOIN sys.availability_groups AS ag WITH (NOLOCK) ON ag.group_id = drs.group_id
 JOIN sys.availability_replicas AS ar WITH (NOLOCK) ON drs.group_id = ar.group_id AND drs.replica_id = ar.replica_id
 JOIN sys.dm_hadr_availability_replica_states ars WITH (NOLOCK) ON ar.replica_id = ars.replica_id
 ORDER BY ars.role_desc ASC,	ag.name ASC, ar.replica_server_name ASC, adc.database_name ASC;
-
-
-
-USE [master]
-GO
-ALTER AVAILABILITY GROUP [HRMGAGL]
-MODIFY REPLICA ON N'AUSPWHRMGRDB01' 
-WITH (SECONDARY_ROLE(ALLOW_CONNECTIONS = READ_ONLY))
-GO
-ALTER AVAILABILITY GROUP [HRMGAGL]
-MODIFY REPLICA ON N'AUSPWHRMGRDB01' 
-WITH (SECONDARY_ROLE (READ_ONLY_ROUTING_URL = N'TCP://AUSPWHRMGRDB01.aus.amer.dell.com:5022'))
 GO
