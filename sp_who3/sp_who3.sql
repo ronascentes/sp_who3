@@ -56,7 +56,7 @@ BEGIN
 		BEGIN
 			SET @sql_who = @sql_who + N'WHERE r.session_id = @pSPID AND db_name(r.database_id) = @pDatabase;';
 			SET @ParmDefinition = N'@pSPID INT, @pDatabase SYSNAME';
-			EXECUTE sp_executesql @sql_who, @ParmDefinition, @pSPID = @spid, @pDatabase = @Database;
+			EXECUTE sp_executesql @sql_who, @ParmDefinition, @pSPID = @spid, @pDatabase = @database;
 		END;
 	ELSE IF @spid IS NOT NULL
 		BEGIN
@@ -68,7 +68,7 @@ BEGIN
 		BEGIN
 			SET @sql_who = @sql_who + N'WHERE r.session_id <> @@SPID AND se.is_user_process = 1 AND db_name(r.database_id) = @pDatabase;'
 			SET @ParmDefinition = N'@pDatabase SYSNAME';
-			EXECUTE sp_executesql @sql_who, @ParmDefinition, @pDatabase = @Database;
+			EXECUTE sp_executesql @sql_who, @ParmDefinition, @pDatabase = @database;
 		END;
 	ELSE
 		BEGIN
