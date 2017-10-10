@@ -1,4 +1,4 @@
-# SQL Tools
+# SQL Server toolbox
 
 Repository for tools and scripts for SQL Server administration and development.
 
