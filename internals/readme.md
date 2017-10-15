@@ -1,5 +1,5 @@
-# Ultimate Health Check
-Quick health check for production databases. 
+# Internals
+SQL Server scripts for deep analysis and troubleshooting.  
 
 ## References: 
 SQL Server Diagnostic Information Queries - http://sqlskills.com/blogs/glenn - Copyright (C) 2016 Glenn Berry, SQLskills.com - All rights reserved.
