@@ -54,7 +54,7 @@ System Dynamic Management Views - https://docs.microsoft.com/en-us/sql/relationa
  
 Microsoft Tiger Team - https://github.com/Microsoft/tigertoolbox
 
-DynamicsPerf - https://blogs.msdn.microsoft.com/axinthefield and 
+DynamicsPerf - https://blogs.msdn.microsoft.com/axinthefield and https://blogs.msdn.microsoft.com/axperf/
 
 ## Contact 
 
