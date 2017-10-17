@@ -43,7 +43,7 @@ Works only for SQL Server 2008 R2 or above
 | start_time | datetime	| Timestamp when the request arrived. Is not nullable. |
 | percent_complete | real | Percentage of work completed for some commands. |
 | est_time_to_go | datetime | Estimate complete time of the request. |
-| est_completion_time |
+| est_completion_time | datetime | Estimate complete datetime of the request. |
 
 
 
