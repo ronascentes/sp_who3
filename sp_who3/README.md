@@ -50,11 +50,13 @@ Works only for SQL Server 2008 R2 or above
 
 ## Reference
 
-Dynamic Management Views and Functions (Transact-SQL) - https://msdn.microsoft.com/en-us/library/ms188754.aspx?f=255&MSPPError=-2147217396
+System Dynamic Management Views - https://docs.microsoft.com/en-us/sql/relational-databases/system-dynamic-management-views/system-dynamic-management-views
  
-Microsoft Tiger Team - Extracted from https://github.com/Microsoft/tigertoolbox
+Microsoft Tiger Team - https://github.com/Microsoft/tigertoolbox
 
+DynamicsPerf - https://blogs.msdn.microsoft.com/axinthefield and 
 
 ## Contact 
 
-@ronascentes at twitter
+http://twitter.com/ronascentes
+
