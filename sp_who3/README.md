@@ -18,6 +18,7 @@ Works only for SQL Server 2008 R2 or above
 ## Result set
 
 | Column | Data Type | Description |
+| --- | --- | --- |
 | session_id | smallint | ID of the session to which this request is related. Is not nullable. |
 | host_name | nvarchar(128) | Name of the client workstation that is specific to a session. The value is NULL for internal sessions. Is nullable. |
 | login_name | nvarchar(128) | SQL Server login name under which the session is currently executing. |
