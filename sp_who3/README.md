@@ -22,12 +22,12 @@ Works only for SQL Server 2008 R2 or above
 | session_id | smallint | ID of the session to which this request is related. Is not nullable. |
 | host_name | nvarchar(128) | Name of the client workstation that is specific to a session. The value is NULL for internal sessions. Is nullable. |
 | login_name | nvarchar(128) | SQL Server login name under which the session is currently executing. |
-| dbname | nvarchar(128) | Name of the database the request is executing against. Is not nullable. |
+| db_name | nvarchar(128) | Name of the database the request is executing against. Is not nullable. |
 | status | nvarchar(30)	| Status of the request. |
 | command | nvarchar(32) |	Identifies the current type of command that is being processed. |
 | running_time| varchar | Period of time that request is running. Is not nullable. |
-| BlkBy	| smallint | ID of the session that is blocking the request. |
-| NoOfOpenTran| int	| Number of transactions that are open for this request. Is not nullable. |
+| blk_by	| smallint | ID of the session that is blocking the request. |
+| open_tran_count| int	| Number of transactions that are open for this request. Is not nullable. |
 | wait_type	| nvarchar(60) | If the request is currently blocked, this column returns the type of wait. Is nullable. |
 | object_name | sysname | Name of object. |
 | program_name| nvarchar(128) |	Name of client program that initiated the session. The value is NULL for internal sessions. Is nullable.|
