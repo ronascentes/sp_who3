@@ -25,7 +25,7 @@ BEGIN
 	DECLARE @pSPID			INT;
 	DECLARE @pDatabase		SYSNAME;
 	
-	SET @sql_who = N'SELECT r.session_id, se.host_name, se.login_name, Db_name(r.database_id) AS dbname, r.status, r.command,
+	SET @sql_who = N'SELECT r.session_id, se.host_name, se.login_name, db_name(r.database_id) AS db_name, r.status, r.command,
 					CAST(((DATEDIFF(s,start_time,GetDate()))/3600) as varchar) + '' hour(s), ''
 					+ CAST((DATEDIFF(s,start_time,GetDate())%3600)/60 as varchar) + ''min, ''
 					+ CAST((DATEDIFF(s,start_time,GetDate())%60) as varchar) + '' sec'' as running_time,
