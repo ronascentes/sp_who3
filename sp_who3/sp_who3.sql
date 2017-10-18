@@ -29,7 +29,7 @@ BEGIN
 					CAST(((DATEDIFF(s,start_time,GetDate()))/3600) as varchar) + '' hour(s), ''
 					+ CAST((DATEDIFF(s,start_time,GetDate())%3600)/60 as varchar) + ''min, ''
 					+ CAST((DATEDIFF(s,start_time,GetDate())%60) as varchar) + '' sec'' as running_time,
-					r.blocking_session_id AS BlkBy, r.open_transaction_count AS NoOfOpenTran, r.wait_type,
+					r.blocking_session_id AS blk_by, r.open_transaction_count AS open_tran_count, r.wait_type,
 					object_name = OBJECT_SCHEMA_NAME(s.objectid,s.dbid) + ''.'' + OBJECT_NAME(s.objectid, s.dbid),
  					program_name = se.program_name, p.query_plan AS query_plan,
 					sql_text = SUBSTRING(s.text,
