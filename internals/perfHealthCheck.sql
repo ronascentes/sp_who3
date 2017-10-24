@@ -1,5 +1,5 @@
 /*********************************************************************************************************************************************************
-Quick health check for production databases. 
+Performance health check for SQL Server databases. 
 Created by Rodrigo Nascentes @ronascentes (12-DEC-2016)
 This script was optimized so that it should give acceptable results in 25s
 References: 
