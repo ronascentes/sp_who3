@@ -321,13 +321,19 @@ where physical_name like 'D%'
 and d.name not in ('master','model','msdb','Dell_Maint')
 order by d.name;
 
-SELECT 'Database size' AS [Category], d.name as [db_name], CAST((sum(((size)/128.0))/1024) AS INT) as [size in GB]
-FROM sys.master_files mf
-JOIN sys.databases d
-ON mf.database_id = d.database_id
-WHERE d.name not in ('master','model','msdb','Dell_Maint')
-GROUP BY d.name;
-
+-- database size
+IF EXISTS(select * from tempdb.sys.objects where object_id = OBJECT_ID('tempdb.dbo.#DBSize'))
+	DROP TABLE #DBSize;
+CREATE TABLE #DBSize (db_name SYSNAME, total_space_in_gb numeric, space_used_in_gb numeric, available_space_in_gb numeric, perc_available numeric);
+EXECUTE sp_MSforeachdb N'USE [?];
+INSERT INTO #DBSize (db_name, total_space_in_gb, space_used_in_gb, available_space_in_gb, perc_available)
+SELECT DB_NAME(), SUM((size/128.0))/1024, SUM(CAST(FILEPROPERTY(name, ''SpaceUsed'') AS int)/128.0)/1024,
+SUM(size/128.0 - CAST(FILEPROPERTY(name, ''SpaceUsed'') AS int)/128.0)/1024,
+sum((((size)/128.0) - CAST(FILEPROPERTY(name, ''SpaceUsed'') AS int)/128.0)) / sum(((size)/128.0)) * 100 
+FROM sys.database_files WITH (NOLOCK)';
+SELECT 'Database Size' as [Category],  db_name, total_space_in_gb, space_used_in_gb, available_space_in_gb, perc_available FROM #DBSize
+WHERE db_name NOT IN ('master','model','msdb','tempdb');
+DROP TABLE #DBSize;
 
 -- get I/O latency for all databases
 -- any value < 20 ms is acceptable for data files
