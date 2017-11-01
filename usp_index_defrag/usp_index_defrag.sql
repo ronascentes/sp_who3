@@ -23,7 +23,7 @@ usp_index_defrag:		Uses sys.dm_db_index_physical_stats to get fragmentation info
 						Rebuilding indexes can causeáthe log file to grow significantlyáas the log cannot be truncated until redo has completed the changes in all secondary replicas.
 						https://support.microsoft.com/en-us/kb/317375
 						 
-Witten By:				Rodrigo N Silva 
+Witten By:				@ronascentes - 
 			
 Date:					Jun. 6th, 2016 
 
@@ -36,9 +36,6 @@ References:				https://blogs.technet.microsoft.com/josebda/2009/03/20/sql-server
 						https://blogs.msdn.microsoft.com/alwaysonpro/2015/03/03/recommendations-for-index-maintenance-with-alwayson-availability-groups/
 						https://msdn.microsoft.com/en-us/library/ms190981(v=sql.110).aspx
 
-Revision:				01/04/2017 - Antonio Carneiro - fixed sys.dm_db_index_physical_stats case sensitive issue
-						01/09/2017 - Rodrigo Silva - fixed "ObjectID" case sensitive
-						01/26/2017 - Rodrigo Silva - Added support to columnstore index (SQL 2016 only)
 *********************************************************************************************/
 
 DECLARE @SQL NVARCHAR(4000), @ErrorMessage NVARCHAR(4000);
@@ -99,7 +96,7 @@ SET @Sql = N'INSERT INTO #frag_info(DatabaseName, ObjectOwner, ObjectName, Objec
 			JOIN sys.schemas s ON s.schema_id = o.schema_id 
 			JOIN sys.indexes i ON i.object_id = stats.object_id AND i.index_id = stats.index_id
 			WHERE stats.avg_fragmentation_in_percent >= 10.0 
-					AND stats.page_count >= 1000 
+					AND stats.page_count >= 5000 
 					AND stats.index_id > 0'
 
 EXECUTE @dbContext @Sql
