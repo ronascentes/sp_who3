@@ -11,14 +11,14 @@ https://github.com/Microsoft/tigertoolbox MSSQL Tiger team toolbox
 USE [master]
 GO
 
-DECLARE @check_missing_indexes BIT, @check_top_queries BIT, @check_in_memory BIT;
+DECLARE @check_missing_indexes BIT, @check_top_queries BIT, @check_in_memory BIT, @sqlversion INT;
 
 SET NOCOUNT ON;
 SET ANSI_WARNINGS ON;
 SET QUOTED_IDENTIFIER ON;
 SET DATEFORMAT mdy;
 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
-
+SET @sqlversion =  @@microsoftversion / 0x01000000;
 SET @check_missing_indexes = 0;
 SET @check_in_memory = 1;
 SET @check_top_queries = 0;
@@ -78,29 +78,32 @@ WHERE configuration_id IN (518,1538,1539,1544,1581,1517);
 
 -- Usage: 
 -- DBCC TRACEON (1118,3226,2371,4199, -1);
-IF EXISTS (select * from tempdb.sys.objects (NOLOCK) WHERE [object_id] = OBJECT_ID('tempdb.dbo.#trace_flag'))
-  DROP TABLE #trace_flag;
 
--- Get the list of objects to defrag
-CREATE TABLE #trace_flag(
-	[TraceFlag] INT NULL,
-	[Status] TINYINT NULL,
-	[Global] TINYINT NULL,
-	[Session] TINYINT NULL
-)
+IF @sqlversion < 13 -- less than SQL 2016
+BEGIN
+	IF EXISTS (select * from tempdb.sys.objects (NOLOCK) WHERE [object_id] = OBJECT_ID('tempdb.dbo.#trace_flag'))
+	DROP TABLE #trace_flag;
 
-INSERT INTO #trace_flag
-EXEC ('DBCC TRACESTATUS (1118,3226,2371,4199) WITH NO_INFOMSGS')
+	-- Get the list of objects to defrag
+	CREATE TABLE #trace_flag(
+		[TraceFlag] INT NULL,
+		[Status] TINYINT NULL,
+		[Global] TINYINT NULL,
+		[Session] TINYINT NULL
+	)
 
-SELECT TraceFlag, Status, Global, Session, N'turns off mixed page allocations. Reduces the risk of page latch contention on the SGAM allocation bitmatps that track mixed extents; which is one of the leading causes for contention in tempdb' AS [INFO] FROM #trace_flag WHERE TraceFlag = 1118
-UNION
-SELECT TraceFlag, Status, Global, Session, N'simply stops SQL Server from writing backup successful messages to the error log' AS [INFO] FROM #trace_flag WHERE TraceFlag = 3226
-UNION
-SELECT TraceFlag, Status, Global, Session, N'changes to automatic update statistics' AS [INFO] FROM #trace_flag WHERE TraceFlag = 2371
-UNION
-SELECT TraceFlag, Status, Global, Session, N'SQL Server query optimizer hotfix servicing model https://support.microsoft.com/en-us/kb/974006 Enabled by default in SQL 2016' AS [INFO] FROM #trace_flag WHERE TraceFlag = 4199
-DROP TABLE #trace_flag;
+	INSERT INTO #trace_flag
+	EXEC ('DBCC TRACESTATUS (1118,3226,2371,4199) WITH NO_INFOMSGS')
 
+	SELECT TraceFlag, Status, Global, Session, N'turns off mixed page allocations. Reduces the risk of page latch contention on the SGAM allocation bitmatps that track mixed extents; which is one of the leading causes for contention in tempdb' AS [INFO] FROM #trace_flag WHERE TraceFlag = 1118
+	UNION
+	SELECT TraceFlag, Status, Global, Session, N'simply stops SQL Server from writing backup successful messages to the error log' AS [INFO] FROM #trace_flag WHERE TraceFlag = 3226
+	UNION
+	SELECT TraceFlag, Status, Global, Session, N'changes to automatic update statistics' AS [INFO] FROM #trace_flag WHERE TraceFlag = 2371
+	UNION
+	SELECT TraceFlag, Status, Global, Session, N'SQL Server query optimizer hotfix servicing model https://support.microsoft.com/en-us/kb/974006 Enabled by default in SQL 2016' AS [INFO] FROM #trace_flag WHERE TraceFlag = 4199
+	DROP TABLE #trace_flag;
+END;
 
 /************** Task counts ************************************************************************************************************************/
 -- Get Average Task Counts (run multiple times)
@@ -258,7 +261,7 @@ WHERE [object_name] LIKE N'%Memory Manager%' AND counter_name = N'Memory Grants 
 /************** IN-MEMORY ************************************************************************************************************************/
 IF @check_in_memory = 1
 	BEGIN
-	IF (SELECT @@microsoftversion / 0x01000000) > 11 -- greater than SQL 2012
+	IF @sqlversion > 11 -- greater than SQL 2012
 	BEGIN
 		IF (SELECT SERVERPROPERTY('IsXTPSupported')) = 1 -- in-memory OLTP is supported
 			BEGIN
@@ -321,16 +324,16 @@ where physical_name like 'D%'
 and d.name not in ('master','model','msdb','Dell_Maint')
 order by d.name;
 
--- database size
+-- database size for all dbs
 IF EXISTS(select * from tempdb.sys.objects where object_id = OBJECT_ID('tempdb.dbo.#DBSize'))
 	DROP TABLE #DBSize;
 CREATE TABLE #DBSize (db_name SYSNAME, total_space_in_gb numeric, space_used_in_gb numeric, available_space_in_gb numeric, perc_available numeric);
 EXECUTE sp_MSforeachdb N'USE [?];
-INSERT INTO #DBSize (db_name, total_space_in_gb, space_used_in_gb, available_space_in_gb, perc_available)
-SELECT DB_NAME(), SUM((size/128.0))/1024, SUM(CAST(FILEPROPERTY(name, ''SpaceUsed'') AS int)/128.0)/1024,
-SUM(size/128.0 - CAST(FILEPROPERTY(name, ''SpaceUsed'') AS int)/128.0)/1024,
-sum((((size)/128.0) - CAST(FILEPROPERTY(name, ''SpaceUsed'') AS int)/128.0)) / sum(((size)/128.0)) * 100 
-FROM sys.database_files WITH (NOLOCK)';
+	INSERT INTO #DBSize (db_name, total_space_in_gb, space_used_in_gb, available_space_in_gb, perc_available)
+	SELECT DB_NAME(), SUM((size/128.0))/1024, SUM(CAST(FILEPROPERTY(name, ''SpaceUsed'') AS int)/128.0)/1024,
+	SUM(size/128.0 - CAST(FILEPROPERTY(name, ''SpaceUsed'') AS int)/128.0)/1024,
+	sum((((size)/128.0) - CAST(FILEPROPERTY(name, ''SpaceUsed'') AS int)/128.0)) / sum(((size)/128.0)) * 100 
+	FROM sys.database_files WITH (NOLOCK)';
 SELECT 'Database Size' as [Category],  db_name, total_space_in_gb, space_used_in_gb, available_space_in_gb, perc_available FROM #DBSize
 WHERE db_name NOT IN ('master','model','msdb','tempdb');
 DROP TABLE #DBSize;
@@ -468,6 +471,8 @@ exec xp_readerrorlog 0, 1, N'HK_E_OUTOFMEMORY',null,null,null, N'desc';
 exec xp_readerrorlog 0, 1, N'SQL Server is terminating because of a system shutdown',null,null,null, N'desc';
 exec xp_readerrorlog 0, 1, N'Always On: The availability replica manager is going offline',null,null,null, N'desc';
 exec xp_readerrorlog 0, 1, N'FAIL_PAGE_ALLOCATION',null,null,null, N'desc';
+exec xp_readerrorlog 0, 1, N'Error: 17066',null,null,null, N'desc'; -- SQL Server may be unresponsive to user requests at this point
+exec xp_readerrorlog 0, 1, N'Error: 3624',null,null,null, N'desc'; -- dump generated. Run DBCC CHECKDB
 
 IF @check_missing_indexes = 1
 BEGIN 
