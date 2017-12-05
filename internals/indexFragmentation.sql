@@ -31,10 +31,10 @@ GO
 
 
 SELECT DB_NAME(), s.name, o.name, i.[object_id], i.name, stats.avg_fragmentation_in_percent, stats.index_type_desc, stats.alloc_unit_type_desc	
-			FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, 'LIMITED') stats
-			JOIN sys.objects o ON o.object_id = stats.object_id
-			JOIN sys.schemas s ON s.schema_id = o.schema_id 
-			JOIN sys.indexes i ON i.object_id = stats.object_id AND i.index_id = stats.index_id
-			WHERE stats.avg_fragmentation_in_percent >= 10.0 
-					AND stats.page_count >= 1000 
-					AND stats.index_id > 0
+FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, 'LIMITED') stats
+JOIN sys.objects o WITH (NOLOCK) ON o.object_id = stats.object_id
+JOIN sys.schemas s WITH (NOLOCK) ON s.schema_id = o.schema_id 
+JOIN sys.indexes i WITH (NOLOCK) ON i.object_id = stats.object_id AND i.index_id = stats.index_id
+WHERE stats.avg_fragmentation_in_percent >= 10.0 
+AND stats.page_count >= 5000 
+AND stats.index_id > 0
