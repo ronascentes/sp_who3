@@ -30,6 +30,12 @@ SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version In
 /************** Uptime information ************************************************************************************************************************/
 SELECT 'Uptime' AS [Category], sqlserver_start_time, CONVERT(VARCHAR(4),DATEDIFF(mi,sqlserver_start_time,GETDATE())/60/24) + 'd ' + CONVERT(VARCHAR(4),DATEDIFF(mi,sqlserver_start_time,GETDATE())/60%24) + 'hr ' + CONVERT(VARCHAR(4),DATEDIFF(mi,sqlserver_start_time,GETDATE())%60) + 'min' AS Uptime FROM sys.dm_os_sys_info (NOLOCK);
 
+/************** Connections ************************************************************************************************************************/
+SELECT N'Perfmon' as [Category],counter_name, cntr_value
+FROM sys.dm_os_performance_counters WITH (NOLOCK)
+WHERE [object_name] LIKE N'%General Statistics%' AND counter_name = N'Transactions'
+OR ([object_name] LIKE N'%General Statistics%' AND counter_name = N'User Connections')
+OR ([object_name] LIKE N'%SQL Statistics%' AND counter_name = N'Batch Requests/sec')
 
 /************** AlwayOn information ************************************************************************************************************************/
 IF (SELECT SERVERPROPERTY('IsHadrEnabled')) = 1
