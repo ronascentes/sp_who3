@@ -20,10 +20,10 @@ usp_index_defrag:		Uses sys.dm_db_index_physical_stats to get fragmentation info
 						Uses MAXDOP to reduce the concurrent index alteration activity;
 						Uses the latest ALTER INDEX features
 						Works only for SQL Server 2008 or above;
-						Rebuilding indexes can causeáthe log file to grow significantlyáas the log cannot be truncated until redo has completed the changes in all secondary replicas.
+						Rebuilding indexes can cause the log file to grow significantly the log cannot be truncated until redo has completed the changes in all secondary replicas.
 						https://support.microsoft.com/en-us/kb/317375
 						 
-Witten By:				@ronascentes - 
+Witten By:				@ronascentes - https://github.com/ronascentes/sqltoolbox/tree/master/usp_index_defrag
 			
 Date:					Jun. 6th, 2016 
 
