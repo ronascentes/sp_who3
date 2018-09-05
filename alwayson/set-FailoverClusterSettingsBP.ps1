@@ -6,7 +6,7 @@
   Uses this script to set cluster settings as per Microsoft best practices in order to prevent unexpected failovers
     
   .Notes
-  Author: Rodrigo Silva - rodrigo_n_silva@dell.com  
+  Author: Rodrigo - @ronascentes  
   
  .Link
   References:
