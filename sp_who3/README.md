@@ -3,7 +3,7 @@ Stop using sp_who2, start using sp_who3!
 
 # sp_who3
 
-Use sp_who3 to first view the current system load and to identify a session, users, requests, processes and/or blockers in an instance of the SQL Server by using the latest DMVs and T-SQL features.
+Use sp_who3 to first view the current system load and to identify a session/requests and/or blockers in an instance of the SQL Server by using the latest DMVs and T-SQL features.
 
 ## Limitation
 
