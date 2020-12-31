@@ -3,17 +3,52 @@ Stop using sp_who2, start using sp_who3!
 
 # sp_who3
 
-Use sp_who3 to first view the current system load and to identify a session/requests and/or blockers in an instance of the SQL Server by using the latest DMVs and T-SQL features.
+Use sp_who3 to first view the current system load and to identify a session, users and/or requests of interest.
+
+	- Current active sessions/ requests
+	- Current idle sessions that have open transactions
+	- Connected users and how many sessions they have
+	- Connected sessions that are running no requests (sleeping)
 
 ## Limitation
 
 Works only for SQL Server 2008 R2 or above 
 
+## Sintax
+
+``` 
+sp_who3 [ [ @filter = ] 'login_name' | SPID ]
+[, [ @info = ] 'IDLE' | 'COUNT' | 'SLEEPING' ]
+[, [ @orderby = ] 'CPU' | 'DURATION' ]
+``` 
+
 ## Parameters
 
-[@spid = 999]           : filter sessions by spid. Default is null.
+`[ @filter = ] 'login_name' | SPID` 
+Is used to filter the result set. Default value is null.
 
-[@database = 'db_name'] : filter sessions by database name. Default is null.
+*login_name* is **sysname** that identifies processes belonging to a particular login. It has no effect for @info = 'IDLE'
+
+*SPID* is a session identification number belonging to the SQL Server instance. SPID is smallint. It has no effect for @info = 'IDLE' | 'COUNT'.
+
+
+`[ @info = ] 'IDLE' | 'COUNT' | 'SLEEPING'`
+
+*IDLE* provides information about current idle sessions that have open transactions
+
+*COUNT* provides information about connected users and how many sessions they have
+
+*SLEEPING* provides information about connected sessions that are not running requests
+
+If no value is provided, the procedure provides information about current users, sessions and requests in an SQL Server instance
+
+`[ @orderby = ] 'CPU' | 'DURATION'`	
+
+*CPU* provides information from highest to lowest cpu_time value. It has no effect for @info = 'IDLE' | 'COUNT' | 'SLEEPING'.
+
+*DURATION* provides information from highest to lowest running_time value. It has no effect for @info = 'IDLE' | 'COUNT'.
+
+Default value is null.
 
 ## Result set
 
@@ -46,7 +81,9 @@ Works only for SQL Server 2008 R2 or above
 | est_time_to_go | datetime | Estimate complete time of the request. |
 | est_completion_time | datetime | Estimate complete datetime of the request. |
 
+## License
 
+sp_who3 (and its repository) is licensed under the [MIT License](https://github.com/ronascentes/sp_who3/blob/master/LICENSE)
 
 ## Reference
 
@@ -58,5 +95,5 @@ DynamicsPerf - https://blogs.msdn.microsoft.com/axinthefield and https://blogs.m
 
 ## Contact 
 
-http://twitter.com/ronascentes
+Twitter @ronascentes
 
