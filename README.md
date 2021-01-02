@@ -18,6 +18,7 @@ sp_who3 [ [ @filter = ] 'login_name' | SPID ]
 ## Parameters
 
 `[ @filter = ] 'login_name' | SPID` 
+
 Is used to filter the result set. Default value is null.
 
 *login_name* is **sysname** that identifies processes belonging to a particular login. It has no effect for @info = 'IDLE'
