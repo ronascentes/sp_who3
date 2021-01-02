@@ -1,7 +1,4 @@
-
-Stop using sp_who2, start using sp_who3!
-
-# sp_who3
+# SP_WHO3
 
 Use sp_who3 to first view the current system load and to identify a session, users and/or requests of interest.
 
@@ -9,10 +6,6 @@ Use sp_who3 to first view the current system load and to identify a session, use
 	- Current idle sessions that have open transactions
 	- Connected users and how many sessions they have
 	- Connected sessions that are running no requests (sleeping)
-
-## Limitation
-
-Works only for SQL Server 2008 R2 or above 
 
 ## Sintax
 
@@ -34,21 +27,23 @@ Is used to filter the result set. Default value is null.
 
 `[ @info = ] 'IDLE' | 'COUNT' | 'SLEEPING'`
 
+Is used to select the type of information. Default value is null which show information about current users, sessions and requests in an SQL Server instance.
+
 *IDLE* provides information about current idle sessions that have open transactions
 
 *COUNT* provides information about connected users and how many sessions they have
 
 *SLEEPING* provides information about connected sessions that are not running requests
 
-If no value is provided, the procedure provides information about current users, sessions and requests in an SQL Server instance
 
 `[ @orderby = ] 'CPU' | 'DURATION'`	
+
+Is used to order the result set by the selected option. Default value is null.
 
 *CPU* provides information from highest to lowest cpu_time value. It has no effect for @info = 'IDLE' | 'COUNT' | 'SLEEPING'.
 
 *DURATION* provides information from highest to lowest running_time value. It has no effect for @info = 'IDLE' | 'COUNT'.
 
-Default value is null.
 
 ## Result set
 
@@ -81,6 +76,10 @@ Default value is null.
 | est_time_to_go | datetime | Estimate complete time of the request. |
 | est_completion_time | datetime | Estimate complete datetime of the request. |
 
+## Limitation
+
+Works only for SQL Server 2008 R2 or above 
+
 ## License
 
 sp_who3 (and its repository) is licensed under the [MIT License](https://github.com/ronascentes/sp_who3/blob/master/LICENSE)
@@ -95,5 +94,5 @@ DynamicsPerf - https://blogs.msdn.microsoft.com/axinthefield and https://blogs.m
 
 ## Contact 
 
-Twitter @ronascentes
+On Twitter [@ronascentes](https://twitter.com/ronascentes)
 
