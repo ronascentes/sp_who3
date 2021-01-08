@@ -20,38 +20,11 @@ AS
 /***************************************************************************************************** 
 Use sp_who3 to first view the current system load and to identify a session, users and/or requests of interest.
 
-	- Current active sessions/ requests
-	- Current idle sessions that have open transactions
-	- Connected users and how many sessions they have
-	- Connected sessions that are running no requests (sleeping)
-
-SINTAX:	
-sp_who3 [ [ @filter = ] 'login_name' | SPID ]
-[, [ @info = ] 'IDLE' | 'COUNT' | 'SLEEPING' ]
-[, [ @orderby = ] 'CPU' | 'DURATION' ]
-
-Parameters:	
-@filter	SYNAME
-login_name is sysname that identifies processes belonging to a particular login. It has no effect for @info = 'IDLE'
-SPID is a session identification number belonging to the SQL Server instance. SPID is smallint. It has no effect for @info = 'IDLE' | 'COUNT'.
-Default value is null.
-
-@info SYSNAME
-IDLE - provides information about current idle session that have open transactions
-COUNT - provides information about connected users and how many sessions they have
-SLEEPING - provides information about connected sessions that are not running requests
-If no value is provided, the procedure provides information about current users, sessions and requests in an SQL Server instance
-
-@orderby SYSNAME	
-CPU - provides information from highest to lowest cpu_time value. It has no effect for @info = 'IDLE' | 'COUNT' | 'SLEEPING'.
-DURATION - provides information from highest to lowest running_time value. It has no effect for @info = 'IDLE' | 'COUNT'.
-Default value is null.
-
-Create by Rodrigo Nascentes Date: 31-Jul-2011
+Source: https://github.com/ronascentes/sp_who3
 
 MIT License
 
-Copyright (c) 2018 Rodrigo Nascentes
+Copyright (c) 2021 Rodrigo Nascentes
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
