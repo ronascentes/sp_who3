@@ -2,10 +2,10 @@
 
 Use sp_who3 to first view the current system load and to identify a session, users and/or requests of interest.
 
-	- Current active sessions/ requests
-	- Current idle sessions that have open transactions
-	- Connected users and how many sessions they have
-	- Connected sessions that are running no requests (sleeping)
+- Current active sessions/ requests
+- Current idle sessions that have open transactions
+- Connected users and how many sessions they have
+- Connected sessions that are running no requests (sleeping)
 
 ## Sintax
 
@@ -79,7 +79,7 @@ Is used to order the result set by the selected option. Default value is null.
 
 ## Limitation
 
-Works only for SQL Server 2008 R2 or above 
+Works only for SQL Server 2012 or above.
 
 ## License
 
