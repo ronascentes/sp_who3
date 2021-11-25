@@ -91,7 +91,7 @@ Tested and validated for SQL Server 2012 or above.
 
 sp_who3 (and its repository) is licensed under the [MIT License](https://github.com/ronascentes/sp_who3/blob/master/LICENSE)
 
-## Maintener 
+## Maintainer
 
 Rodrigo Nascentes - [@ronascentes](https://twitter.com/ronascentes)
 
