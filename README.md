@@ -1,11 +1,15 @@
 # SP_WHO3
 
-Use sp_who3 to first view the current system load and to identify a session, users and/or requests of interest.
+Community version of [sp_who](https://docs.microsoft.com/en-us/sql/relational-databases/system-stored-procedures/sp-who-transact-sql?view=sql-server-ver15) which provides information about current users, sessions, and processes in an instance of the Microsoft SQL Server Database Engine.
 
 - Current active sessions/ requests
 - Current idle sessions that have open transactions
 - Connected users and how many sessions they have
 - Connected sessions that are running no requests (sleeping)
+
+### Why yet another stored procedure similiar of sp_who?
+There are others great tools with same purpose such as [sp_blitz](https://www.brentozar.com/blitz/) and [sp_whoisactive](http://whoisactive.com/).
+SP_WHO3' differentiation is that it is was tested and validated against more than 10000 SQL Server instances to run faster during a critical war room.
 
 ## Sintax
 
@@ -85,6 +89,10 @@ Works only for SQL Server 2012 or above.
 
 sp_who3 (and its repository) is licensed under the [MIT License](https://github.com/ronascentes/sp_who3/blob/master/LICENSE)
 
+## Maintener 
+
+On Twitter [@ronascentes](https://twitter.com/ronascentes)
+
 ## Reference
 
 System Dynamic Management Views - https://docs.microsoft.com/en-us/sql/relational-databases/system-dynamic-management-views/system-dynamic-management-views
@@ -93,7 +101,5 @@ Microsoft Tiger Team - https://github.com/Microsoft/tigertoolbox
 
 DynamicsPerf - https://blogs.msdn.microsoft.com/axinthefield and https://blogs.msdn.microsoft.com/axperf/
 
-## Contact 
 
-On Twitter [@ronascentes](https://twitter.com/ronascentes)
 
