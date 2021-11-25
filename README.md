@@ -7,9 +7,11 @@ Community version of [sp_who](https://docs.microsoft.com/en-us/sql/relational-da
 - Connected users and how many sessions they have
 - Connected sessions that are running no requests (sleeping)
 
-### Why yet another stored procedure similiar of sp_who?
+## Why yet another stored procedure similiar of sp_who?
+
 There are others great tools with same purpose such as [sp_blitz](https://www.brentozar.com/blitz/) and [sp_whoisactive](http://whoisactive.com/).
-SP_WHO3' differentiation is that it is was tested and validated against more than 10000 SQL Server instances to run faster during a critical war room.
+
+SP_WHO3' differentiation is that it is was tested and validated against more than 10000 SQL Server instances to run faster during a critical war room and provide straightforward info.
 
 ## Sintax
 
@@ -83,7 +85,7 @@ Is used to order the result set by the selected option. Default value is null.
 
 ## Limitation
 
-Works only for SQL Server 2012 or above.
+Tested and validated for SQL Server 2012 or above.
 
 ## License
 
@@ -91,7 +93,7 @@ sp_who3 (and its repository) is licensed under the [MIT License](https://github.
 
 ## Maintener 
 
-On Twitter [@ronascentes](https://twitter.com/ronascentes)
+Rodrigo Nascentes - [@ronascentes](https://twitter.com/ronascentes)
 
 ## Reference
 
