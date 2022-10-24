@@ -66,6 +66,8 @@ Is used to order the result set by the selected option. Default value is null.
 | blk_by	| smallint | ID of the session that is blocking the request. |
 | open_tran_count| int	| Number of transactions that are open for this request. Is not nullable. |
 | wait_type	| nvarchar(60) | If the request is currently blocked, this column returns the type of wait. Is nullable. |
+| wait_resource | nvarchar(256) | If the request is currently blocked, this column returns the resource for which the request is currently waiting. Isn't nullable. |
+| page_type_desc | nvarchar(64) | Description of the page type (only available for SQL Server 2019 or later). |
 | object_name | sysname | Name of object. |
 | program_name| nvarchar(128) |	Name of client program that initiated the session. The value is NULL for internal sessions. Is nullable.|
 | query_plan | xml | Contains the compile-time Showplan representation of the query execution plan that is specified with plan_handle. |
