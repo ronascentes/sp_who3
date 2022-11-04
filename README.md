@@ -9,9 +9,9 @@ Community version of [sp_who](https://docs.microsoft.com/en-us/sql/relational-da
 
 ## Why yet another stored procedure similiar of sp_who?
 
-There are others great tools with same purpose such as [sp_blitz](https://www.brentozar.com/blitz/) and [sp_whoisactive](http://whoisactive.com/).
+There are others great tools with same purpose such as [sp_blitz](https://www.brentozar.com/blitz/) and [sp_whoisactive](http://whoisactive.com/). Those tools might be more compreensive and complete than sp_who3 for activity monitoring. For example, sp_whoisactive has has 24 parameters which you choose from a variety of options but sp_who3 has only 3.
 
-SP_WHO3' differentiation is that it is was tested and validated against more than 10000 SQL Server instances to run faster during a critical war room and provide straightforward info.
+The motivation behind the sp_who3 development is to have a simple, small and straightforward user experience tool to run faster during a critical trobleshooting war room. The sp_who3 code can be easily maintained and modified as per user needs. To sum up, sp_who3 follow the [KISS Principle](https://en.wikipedia.org/wiki/KISS_principle) of "Keep it Simple, Stupid". 
 
 ## Sintax
 
